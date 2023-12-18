@@ -1,0 +1,95 @@
+.content {
+}
+
+.content-heading {
+  text-transform: uppercase;
+  font-family: 'headings', sans-serif;
+  font-size: calc(24px * var(--textScale));
+  font-weight: 700;
+}
+
+.content-meta {
+  font-size: calc(13px * var(--textScale));
+  margin-top: 4px;
+
+  a {
+    color: var(--cardLinkColor);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.content-description {
+  font-size: calc(13px * var(--textScale));
+  line-height: 1.65;
+  margin-top: 12px;
+
+  & > * + * {
+    margin-top: 20px;
+  }
+
+  li + li {
+    margin-top: 4px;
+  }
+
+  ul li {
+    list-style: disc;
+    margin-left: 18px;
+  }
+
+  ol li {
+    list-style: decimal;
+    margin-left: 18px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: calc(13px * var(--textScale));
+    font-weight: bold;
+  }
+
+  & > h1 + *,
+  & > h2 + *,
+  & > h3 + *,
+  & > h4 + *,
+  & > h5 + *,
+  & > h6 + * {
+    margin-top: 4px;
+  }
+
+  a {
+    color: var(--cardLinkColor);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    border: 1px solid $border;
+    text-align: left;
+    padding: 7px;
+    font-size: 13px;
+  }
+}
+
+.content-special-button {
+  background: var(--scanBackgroundColor);
+  color: var(--scanTextColor);
+  width: 100%;
+  border-radius: calc(var(--borderRadius) * 2);
+  line-height: 50px;
+  margin-top: 20px;
+}

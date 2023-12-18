@@ -1,0 +1,41 @@
+{
+  "name": "halo-base",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "node esbuild.js --minify",
+    "dev": "node esbuild.js --watch",
+    "serve": "cd dist && http-server -c-1 -p 3000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@web3modal/ethereum": "^2.4.1",
+    "@web3modal/react": "^2.4.1",
+    "axios": "^1.2.0",
+    "classnames": "^2.3.2",
+    "ethers": "^5.7.2",
+    "marked": "^4.2.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.4.3",
+    "url-parse": "^1.5.10",
+    "viem": "^0.3.19",
+    "wagmi": "^1.0.1",
+    "zustand": "^4.1.4"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/classnames": "^2.3.1",
+    "@types/marked": "^4.0.7",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.9",
+    "dotenv": "^16.0.3",
+    "esbuild": "^0.17.10",
+    "esbuild-sass-plugin": "^2.6.0",
+    "http-server": "^14.1.1"
+  }
+}

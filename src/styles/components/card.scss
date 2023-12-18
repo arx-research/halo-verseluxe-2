@@ -1,0 +1,10 @@
+.card {
+  color: var(--cardTextColor);
+  border-radius: var(--borderRadius);
+  overflow: hidden;
+}
+
+.card-video {
+  border-top-right-radius: var(--borderRadius);
+  border-top-left-radius: var(--borderRadius);
+}

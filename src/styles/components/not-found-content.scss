@@ -1,0 +1,17 @@
+.not-found-content-heading {
+  font-size: calc(24px * var(--textScale));
+  margin-bottom: 5px;
+}
+
+.not-found-content-body {
+  font-size: calc(14px * var(--textScale));
+}
+
+.not-found-content-scan {
+  background: var(--scanBackgroundColor);
+  color: var(--scanTextColor);
+  width: 100%;
+  border-radius: calc(var(--borderRadius) * 2);
+  line-height: 50px;
+  margin-top: 20px;
+}

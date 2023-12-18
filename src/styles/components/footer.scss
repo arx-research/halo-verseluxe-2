@@ -1,0 +1,15 @@
+.footer {
+  text-align: center;
+  padding: 24px 0;
+  color: var(--footerColor);
+
+  svg {
+    margin: 0 auto;
+  }
+
+  p {
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-top: 10px;
+  }
+}

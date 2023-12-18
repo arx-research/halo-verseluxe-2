@@ -1,0 +1,17 @@
+.header-connect {
+  line-height: 24px;
+  display: inline-block;
+  padding: 0 12px;
+  border-radius: var(--headerButtonBorderRadius);
+  align-items: center;
+  justify-content: center;
+  color: var(--headerButtonColor);
+  border: 1px solid var(--headerButtonColor);
+  font-size: 12px;
+  text-transform: uppercase;
+  transition: 0.2s opacity;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
