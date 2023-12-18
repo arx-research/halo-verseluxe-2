@@ -151,6 +151,10 @@
     justify-content: center;
   }
 
+  &--claimed {
+    pointer-events: none;
+  }
+
   &--claimed .content-special-button__claimed {
     opacity: 1;
   }

@@ -346,6 +346,9 @@ video {
   align-items: center;
   justify-content: center;
 }
+.content-special-button--claimed {
+  pointer-events: none;
+}
 .content-special-button--claimed .content-special-button__claimed {
   opacity: 1;
 }
