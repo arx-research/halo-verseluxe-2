@@ -27,10 +27,6 @@ export default function Content() {
     setTimeout(() => {
       setStatus(2)
     }, 1000)
-
-    setTimeout(() => {
-      setStatus(3)
-    }, 1400)
   }
 
   return (
@@ -58,8 +54,7 @@ export default function Content() {
           disabled={status > 0}
           className={classNames('content-special-button', {
             'content-special-button--pending': status === 1,
-            'content-special-button--trans': status === 2,
-            'content-special-button--claimed': status === 3,
+            'content-special-button--claimed': status === 2,
           })}
         >
           <div className="content-special-button__claimed">
@@ -76,8 +71,7 @@ export default function Content() {
           <span className="content-special-button__text">
             {status === 0 && <>Claim</>}
             {status === 1 && <>Pending</>}
-            {status === 2 && <>Pending</>}
-            {status === 3 && <>Claimed</>}
+            {status === 2 && <>Claimed</>}
           </span>
         </button>
 

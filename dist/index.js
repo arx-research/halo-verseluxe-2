@@ -94416,9 +94416,6 @@ ${content}</tr>
       setTimeout(() => {
         setStatus(2);
       }, 1e3);
-      setTimeout(() => {
-        setStatus(3);
-      }, 1400);
     };
     return /* @__PURE__ */ import_react16.default.createElement(Card, null, isVideo ? /* @__PURE__ */ import_react16.default.createElement("video", { className: "card-video", autoPlay: true, loop: true, playsInline: true, muted: true }, /* @__PURE__ */ import_react16.default.createElement("source", { src: `${ARWEAVE_NODE}/${device.node_id}` })) : /* @__PURE__ */ import_react16.default.createElement("img", { src: `${ARWEAVE_NODE}/${device.node_id}` }), /* @__PURE__ */ import_react16.default.createElement(CardPadding, null, /* @__PURE__ */ import_react16.default.createElement("h1", { className: "content-heading" }, meta.name), /* @__PURE__ */ import_react16.default.createElement("p", { className: "content-meta" }, "Created by", " ", /* @__PURE__ */ import_react16.default.createElement("a", { target: "_blank", href: `${explorer}/${device.device_minter}` }, truncateAddress(device.device_minter))), /* @__PURE__ */ import_react16.default.createElement("div", { className: "content-description", dangerouslySetInnerHTML: { __html: marked(meta.description) } }), /* @__PURE__ */ import_react16.default.createElement(
       "button",
@@ -94427,8 +94424,7 @@ ${content}</tr>
         disabled: status > 0,
         className: (0, import_classnames6.default)("content-special-button", {
           "content-special-button--pending": status === 1,
-          "content-special-button--trans": status === 2,
-          "content-special-button--claimed": status === 3
+          "content-special-button--claimed": status === 2
         })
       },
       /* @__PURE__ */ import_react16.default.createElement("div", { className: "content-special-button__claimed" }, /* @__PURE__ */ import_react16.default.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 -960 960 960", width: "17" }, /* @__PURE__ */ import_react16.default.createElement("path", { d: "M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" }))),
@@ -94439,7 +94435,7 @@ ${content}</tr>
           fill: "currentColor"
         }
       )),
-      /* @__PURE__ */ import_react16.default.createElement("span", { className: "content-special-button__text" }, status === 0 && /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, "Claim"), status === 1 && /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, "Pending"), status === 2 && /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, "Pending"), status === 3 && /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, "Claimed"))
+      /* @__PURE__ */ import_react16.default.createElement("span", { className: "content-special-button__text" }, status === 0 && /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, "Claim"), status === 1 && /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, "Pending"), status === 2 && /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, "Claimed"))
     ), /* @__PURE__ */ import_react16.default.createElement(Divider, null), /* @__PURE__ */ import_react16.default.createElement(ContentDetail, { title: "Device ID" }, keys2.primaryPublicKeyHash)));
   }
 
