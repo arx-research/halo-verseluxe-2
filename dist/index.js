@@ -1105,7 +1105,7 @@
             }
             return dispatcher.useContext(Context2);
           }
-          function useState3(initialState) {
+          function useState4(initialState) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useState(initialState);
           }
@@ -1907,7 +1907,7 @@
           exports.useMemo = useMemo7;
           exports.useReducer = useReducer2;
           exports.useRef = useRef4;
-          exports.useState = useState3;
+          exports.useState = useState4;
           exports.useSyncExternalStore = useSyncExternalStore3;
           exports.useTransition = useTransition;
           exports.version = ReactVersion;
@@ -55810,7 +55810,7 @@ function print() { __p += __j.call(arguments, '') }
             return x4 === y11 && (x4 !== 0 || 1 / x4 === 1 / y11) || x4 !== x4 && y11 !== y11;
           }
           var objectIs = typeof Object.is === "function" ? Object.is : is2;
-          var useState3 = React43.useState, useEffect11 = React43.useEffect, useLayoutEffect = React43.useLayoutEffect, useDebugValue2 = React43.useDebugValue;
+          var useState4 = React43.useState, useEffect11 = React43.useEffect, useLayoutEffect = React43.useLayoutEffect, useDebugValue2 = React43.useDebugValue;
           var didWarnOld18Alpha = false;
           var didWarnUncachedGetSnapshot = false;
           function useSyncExternalStore3(subscribe3, getSnapshot, getServerSnapshot) {
@@ -55832,7 +55832,7 @@ function print() { __p += __j.call(arguments, '') }
                 }
               }
             }
-            var _useState = useState3({
+            var _useState = useState4({
               inst: {
                 value,
                 getSnapshot
@@ -62876,7 +62876,7 @@ function print() { __p += __j.call(arguments, '') }
         "use strict";
         var hasOwn = {}.hasOwnProperty;
         var nativeCodeString = "[native code]";
-        function classNames6() {
+        function classNames7() {
           var classes = [];
           for (var i7 = 0; i7 < arguments.length; i7++) {
             var arg = arguments[i7];
@@ -62887,7 +62887,7 @@ function print() { __p += __j.call(arguments, '') }
               classes.push(arg);
             } else if (Array.isArray(arg)) {
               if (arg.length) {
-                var inner = classNames6.apply(null, arg);
+                var inner = classNames7.apply(null, arg);
                 if (inner) {
                   classes.push(inner);
                 }
@@ -62907,14 +62907,14 @@ function print() { __p += __j.call(arguments, '') }
           return classes.join(" ");
         }
         if (typeof module !== "undefined" && module.exports) {
-          classNames6.default = classNames6;
-          module.exports = classNames6;
+          classNames7.default = classNames7;
+          module.exports = classNames7;
         } else if (typeof define === "function" && typeof define.amd === "object" && define.amd) {
           define("classnames", [], function() {
-            return classNames6;
+            return classNames7;
           });
         } else {
-          window.classNames = classNames6;
+          window.classNames = classNames7;
         }
       })();
     }
@@ -94402,6 +94402,7 @@ ${content}</tr>
   var lexer = Lexer.lex;
 
   // src/components/Content.tsx
+  var import_classnames6 = __toESM(require_classnames());
   function Content() {
     const device = applicationStore_default((s7) => s7.device);
     const keys2 = applicationStore_default((s7) => s7.deviceKeys);
@@ -94409,7 +94410,37 @@ ${content}</tr>
     const chainId = applicationStore_default((s7) => s7.walletChainId);
     const explorer = getChainData(chainId).explorer;
     const isVideo = device.content_type.indexOf("video") > -1;
-    return /* @__PURE__ */ import_react16.default.createElement(Card, null, isVideo ? /* @__PURE__ */ import_react16.default.createElement("video", { className: "card-video", autoPlay: true, loop: true, playsInline: true, muted: true }, /* @__PURE__ */ import_react16.default.createElement("source", { src: `${ARWEAVE_NODE}/${device.node_id}` })) : /* @__PURE__ */ import_react16.default.createElement("img", { src: `${ARWEAVE_NODE}/${device.node_id}` }), /* @__PURE__ */ import_react16.default.createElement(CardPadding, null, /* @__PURE__ */ import_react16.default.createElement("h1", { className: "content-heading" }, meta.name), /* @__PURE__ */ import_react16.default.createElement("p", { className: "content-meta" }, "Created by", " ", /* @__PURE__ */ import_react16.default.createElement("a", { target: "_blank", href: `${explorer}/${device.device_minter}` }, truncateAddress(device.device_minter))), /* @__PURE__ */ import_react16.default.createElement("div", { className: "content-description", dangerouslySetInnerHTML: { __html: marked(meta.description) } }), /* @__PURE__ */ import_react16.default.createElement("button", { className: "content-special-button" }, "Claim"), /* @__PURE__ */ import_react16.default.createElement("button", { disabled: true, className: "content-special-button content-special-button--loading" }, "Claiming..."), /* @__PURE__ */ import_react16.default.createElement("button", { disabled: true, className: "content-special-button" }, "Claimed"), /* @__PURE__ */ import_react16.default.createElement(Divider, null), /* @__PURE__ */ import_react16.default.createElement(ContentDetail, { title: "Device ID" }, keys2.primaryPublicKeyHash)));
+    const [status, setStatus] = (0, import_react16.useState)(0);
+    const buttonClick = () => {
+      setStatus(1);
+      setTimeout(() => {
+        setStatus(2);
+      }, 1e3);
+      setTimeout(() => {
+        setStatus(3);
+      }, 1400);
+    };
+    return /* @__PURE__ */ import_react16.default.createElement(Card, null, isVideo ? /* @__PURE__ */ import_react16.default.createElement("video", { className: "card-video", autoPlay: true, loop: true, playsInline: true, muted: true }, /* @__PURE__ */ import_react16.default.createElement("source", { src: `${ARWEAVE_NODE}/${device.node_id}` })) : /* @__PURE__ */ import_react16.default.createElement("img", { src: `${ARWEAVE_NODE}/${device.node_id}` }), /* @__PURE__ */ import_react16.default.createElement(CardPadding, null, /* @__PURE__ */ import_react16.default.createElement("h1", { className: "content-heading" }, meta.name), /* @__PURE__ */ import_react16.default.createElement("p", { className: "content-meta" }, "Created by", " ", /* @__PURE__ */ import_react16.default.createElement("a", { target: "_blank", href: `${explorer}/${device.device_minter}` }, truncateAddress(device.device_minter))), /* @__PURE__ */ import_react16.default.createElement("div", { className: "content-description", dangerouslySetInnerHTML: { __html: marked(meta.description) } }), /* @__PURE__ */ import_react16.default.createElement(
+      "button",
+      {
+        onClick: buttonClick,
+        disabled: status > 0,
+        className: (0, import_classnames6.default)("content-special-button", {
+          "content-special-button--pending": status === 1,
+          "content-special-button--trans": status === 2,
+          "content-special-button--claimed": status === 3
+        })
+      },
+      /* @__PURE__ */ import_react16.default.createElement("div", { className: "content-special-button__claimed" }, /* @__PURE__ */ import_react16.default.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 -960 960 960", width: "17" }, /* @__PURE__ */ import_react16.default.createElement("path", { d: "M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" }))),
+      /* @__PURE__ */ import_react16.default.createElement("svg", { className: "content-special-button__spinner", viewBox: "0 0 20 20" }, /* @__PURE__ */ import_react16.default.createElement(
+        "path",
+        {
+          d: "M7.229 1.173a9.25 9.25 0 1011.655 11.412 1.25 1.25 0 10-2.4-.698 6.75 6.75 0 11-8.506-8.329 1.25 1.25 0 10-.75-2.385z",
+          fill: "currentColor"
+        }
+      )),
+      /* @__PURE__ */ import_react16.default.createElement("span", { className: "content-special-button__text" }, status === 0 && /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, "Claim"), status === 1 && /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, "Pending"), status === 2 && /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, "Pending"), status === 3 && /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, "Claimed"))
+    ), /* @__PURE__ */ import_react16.default.createElement(Divider, null), /* @__PURE__ */ import_react16.default.createElement(ContentDetail, { title: "Device ID" }, keys2.primaryPublicKeyHash)));
   }
 
   // src/pages/Viewer.tsx

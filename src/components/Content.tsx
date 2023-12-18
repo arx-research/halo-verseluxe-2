@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ARWEAVE_NODE } from '../constants'
 import { getChainData } from '../helpers/get-chain-data'
 import truncateAddress from '../helpers/truncate-address'
@@ -8,6 +8,7 @@ import CardPadding from './CardPadding'
 import ContentDetail from './ContentDetail'
 import Divider from './Divider'
 import { marked } from 'marked'
+import classNames from 'classnames'
 
 export default function Content() {
   const device = applicationStore((s) => s.device)
@@ -17,6 +18,20 @@ export default function Content() {
 
   const explorer = getChainData(chainId).explorer
   const isVideo = device.content_type.indexOf('video') > -1
+
+  const [status, setStatus] = useState(0)
+
+  const buttonClick = () => {
+    setStatus(1)
+
+    setTimeout(() => {
+      setStatus(2)
+    }, 1000)
+
+    setTimeout(() => {
+      setStatus(3)
+    }, 1400)
+  }
 
   return (
     <Card>
@@ -38,14 +53,32 @@ export default function Content() {
         </p>
         <div className="content-description" dangerouslySetInnerHTML={{ __html: marked(meta.description) }} />
 
-        <button className="content-special-button">Claim</button>
-
-        <button disabled className="content-special-button content-special-button--loading">
-          Claiming...
-        </button>
-
-        <button disabled className="content-special-button">
-          Claimed
+        <button
+          onClick={buttonClick}
+          disabled={status > 0}
+          className={classNames('content-special-button', {
+            'content-special-button--pending': status === 1,
+            'content-special-button--trans': status === 2,
+            'content-special-button--claimed': status === 3,
+          })}
+        >
+          <div className="content-special-button__claimed">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="17">
+              <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
+            </svg>
+          </div>
+          <svg className="content-special-button__spinner" viewBox="0 0 20 20">
+            <path
+              d="M7.229 1.173a9.25 9.25 0 1011.655 11.412 1.25 1.25 0 10-2.4-.698 6.75 6.75 0 11-8.506-8.329 1.25 1.25 0 10-.75-2.385z"
+              fill="currentColor"
+            ></path>
+          </svg>
+          <span className="content-special-button__text">
+            {status === 0 && <>Claim</>}
+            {status === 1 && <>Pending</>}
+            {status === 2 && <>Pending</>}
+            {status === 3 && <>Claimed</>}
+          </span>
         </button>
 
         <Divider />
