@@ -217,6 +217,14 @@ video {
   padding: 24px;
   background: var(--cardColor);
 }
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 .content-heading {
   text-transform: uppercase;
   font-family: "headings", sans-serif;
@@ -292,7 +300,34 @@ video {
   width: 100%;
   border-radius: calc(var(--borderRadius) * 2);
   line-height: 50px;
-  margin-top: 20px;
+  margin-top: 18px;
+  padding-top: 2px;
+  font-weight: 600;
+  position: relative;
+}
+.content-special-button:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.content-special-button--loading:disabled {
+  opacity: 0.75;
+  pointer-events: none;
+}
+.content-special-button:after {
+  opacity: 0;
+  transition: 0.2s opacity;
+  width: 20px;
+  height: 20px;
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  margin-top: -10px;
+  animation: 1s infinite rotate linear;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7.229 1.173a9.25 9.25 0 1011.655 11.412 1.25 1.25 0 10-2.4-.698 6.75 6.75 0 11-8.506-8.329 1.25 1.25 0 10-.75-2.385z' fill='%23ffffff'%3E%3C/path%3E%3C/svg%3E");
+}
+.content-special-button--loading:after {
+  opacity: 1;
 }
 .divider {
   background: var(--cardBorderColor);

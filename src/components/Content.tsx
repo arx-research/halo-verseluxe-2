@@ -38,7 +38,15 @@ export default function Content() {
         </p>
         <div className="content-description" dangerouslySetInnerHTML={{ __html: marked(meta.description) }} />
 
-        <button className="content-special-button">Click me!</button>
+        <button className="content-special-button">Claim</button>
+
+        <button disabled className="content-special-button content-special-button--loading">
+          Claiming...
+        </button>
+
+        <button disabled className="content-special-button">
+          Claimed
+        </button>
 
         <Divider />
 
