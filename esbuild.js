@@ -1,5 +1,7 @@
 const esbuild = require('esbuild')
 const { sassPlugin } = require('esbuild-sass-plugin')
+const plugin = require('node-stdlib-browser/helpers/esbuild/plugin')
+const stdLibBrowser = require('node-stdlib-browser')
 
 esbuild
   .context({
@@ -8,7 +10,7 @@ esbuild
     sourcemap: true,
     external: ['*.woff'],
     outdir: 'dist',
-    plugins: [sassPlugin({})],
+    plugins: [sassPlugin({}), plugin(stdLibBrowser)],
     minify: process.argv.includes('--minify'),
   })
   .then((context) => {

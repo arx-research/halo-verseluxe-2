@@ -306,6 +306,10 @@ video {
   position: relative;
   transition: 0.4s opacity;
 }
+.content-special-button--no-wallet {
+  pointer-events: none;
+  opacity: 0.5;
+}
 .content-special-button__spinner {
   pointer-events: none;
   opacity: 0;

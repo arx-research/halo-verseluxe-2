@@ -9,6 +9,14 @@ import safeTag from '../helpers/safe-tag'
 import fromHexString from '../helpers/from-hex-string'
 import buf2hex from '../helpers/buff-to-hex'
 
+import {
+  haloGetDefaultMethod,
+  execHaloCmdWeb,
+  haloFindBridge,
+  haloCheckWebNFCPermission,
+} from '@arx-research/libhalo/api/web.js'
+import parseKeysNew from '../helpers/parse-keys-new'
+
 type TApplicationStore = {
   // Global stuff
   loading: boolean
@@ -50,7 +58,6 @@ const applicationStore = create<TApplicationStore>((set) => ({
   walletConnected: false,
 
   walletConnect: (walletAddress, walletChainId) => {
-    console.log(walletChainId)
     set({ walletAddress, walletChainId, walletConnected: true })
   },
 
@@ -175,28 +182,9 @@ const applicationStore = create<TApplicationStore>((set) => ({
 
   deviceTriggerScan: async () => {
     try {
-      const req: any = {
-        publicKey: {
-          allowCredentials: [
-            {
-              id: fromHexString('02'),
-              transports: ['nfc'],
-              type: 'public-key',
-            },
-          ],
-          challenge: new Uint8Array([
-            113, 241, 176, 49, 249, 113, 39, 237, 135, 170, 177, 61, 15, 14, 105, 236, 120, 140, 4, 41, 65, 225, 107,
-            63, 214, 129, 133, 223, 169, 200, 21, 88,
-          ]),
-          rpId: TAG_DOMAIN,
-          timeout: 60000,
-          userVerification: 'discouraged',
-        },
-      }
-
-      const xdd: any = await navigator.credentials.get(req)
-      const signature = xdd?.response.signature
-      const deviceKeys = parseKeys(buf2hex(signature))
+      // @ts-ignore
+      const res = await execHaloCmdWeb({ name: 'get_pkeys' })
+      const deviceKeys = parseKeysNew(res.publicKeys)
 
       if (deviceKeys) {
         set({ deviceKeys })

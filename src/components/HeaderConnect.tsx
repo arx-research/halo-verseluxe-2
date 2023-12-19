@@ -1,4 +1,4 @@
-import { useWeb3Modal } from '@web3modal/react'
+import { useWeb3Modal } from '@web3modal/wagmi/react'
 import React from 'react'
 
 export default function HeaderConnect() {

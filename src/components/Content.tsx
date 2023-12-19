@@ -10,18 +10,30 @@ import Divider from './Divider'
 import { marked } from 'marked'
 import classNames from 'classnames'
 
-export default function Content() {
-  const device = applicationStore((s) => s.device)
-  const keys = applicationStore((s) => s.deviceKeys)
-  const meta = JSON.parse(device.device_token_metadata)
-  const chainId = applicationStore((s) => s.walletChainId)
+import { createPublicClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
 
-  const explorer = getChainData(chainId).explorer
-  const isVideo = device.content_type.indexOf('video') > -1
+export default function Content() {
+  const s = applicationStore()
+  const meta = JSON.parse(s.device.device_token_metadata)
+  const explorer = getChainData(s.walletChainId).explorer
+  const isVideo = s.device.content_type.indexOf('video') > -1
 
   const [status, setStatus] = useState(0)
 
-  const buttonClick = () => {
+  const client = createPublicClient({
+    chain: mainnet,
+    transport: http(),
+  })
+
+  const buttonClick = async () => {
+    const blockNumber = await client.getBlockNumber()
+    const block = await client.getBlock({
+      blockTag: 'latest',
+    })
+
+    console.log({ block })
+
     setStatus(1)
 
     setTimeout(() => {
@@ -33,26 +45,27 @@ export default function Content() {
     <Card>
       {isVideo ? (
         <video className="card-video" autoPlay loop playsInline muted>
-          <source src={`${ARWEAVE_NODE}/${device.node_id}`} />
+          <source src={`${ARWEAVE_NODE}/${s.device.node_id}`} />
         </video>
       ) : (
-        <img src={`${ARWEAVE_NODE}/${device.node_id}`} />
+        <img src={`${ARWEAVE_NODE}/${s.device.node_id}`} />
       )}
 
       <CardPadding>
         <h1 className="content-heading">{meta.name}</h1>
         <p className="content-meta">
           Created by{' '}
-          <a target="_blank" href={`${explorer}/${device.device_minter}`}>
-            {truncateAddress(device.device_minter)}
+          <a target="_blank" href={`${explorer}/${s.device.device_minter}`}>
+            {truncateAddress(s.device.device_minter)}
           </a>
         </p>
         <div className="content-description" dangerouslySetInnerHTML={{ __html: marked(meta.description) }} />
 
         <button
           onClick={buttonClick}
-          disabled={status > 0}
+          disabled={status > 0 || !s.walletConnected}
           className={classNames('content-special-button', {
+            'content-special-button--no-wallet': !s.walletConnected,
             'content-special-button--pending': status === 1,
             'content-special-button--claimed': status === 2,
           })}
@@ -69,15 +82,16 @@ export default function Content() {
             ></path>
           </svg>
           <span className="content-special-button__text">
-            {status === 0 && <>Claim</>}
-            {status === 1 && <>Pending</>}
-            {status === 2 && <>Claimed</>}
+            {!s.walletConnected && <>Connect wallet to claim</>}
+            {s.walletConnected && status === 0 && <>Claim</>}
+            {s.walletConnected && status === 1 && <>Pending</>}
+            {s.walletConnected && status === 2 && <>Claimed</>}
           </span>
         </button>
 
         <Divider />
 
-        <ContentDetail title="Device ID">{keys.primaryPublicKeyHash}</ContentDetail>
+        <ContentDetail title="Device ID">{s.deviceKeys.primaryPublicKeyHash}</ContentDetail>
       </CardPadding>
     </Card>
   )
