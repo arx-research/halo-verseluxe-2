@@ -13,6 +13,7 @@ import classNames from 'classnames'
 import { createPublicClient, http } from 'viem'
 import { mainnet } from 'viem/chains'
 import hashMessageEIP191SolidityKeccak from '../helpers/hash-message'
+import { useAccount } from 'wagmi'
 
 export default function Content() {
   const s = applicationStore()

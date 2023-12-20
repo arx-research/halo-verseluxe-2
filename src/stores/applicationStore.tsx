@@ -9,9 +9,18 @@ import safeTag from '../helpers/safe-tag'
 
 import { execHaloCmdWeb } from '@arx-research/libhalo/api/web.js'
 import parseKeysNew from '../helpers/parse-keys-new'
-import { createPublicClient, http } from 'viem'
+import {
+  EIP1193Provider,
+  createPublicClient,
+  createWalletClient,
+  custom,
+  encodeAbiParameters,
+  http,
+  parseAbi,
+} from 'viem'
 import { mainnet } from 'wagmi'
 import hashMessageEIP191SolidityKeccak from '../helpers/hash-message'
+import { wagmiAbi } from '../wagmiAbi'
 
 type TApplicationStore = {
   // Global stuff
@@ -36,7 +45,8 @@ type TApplicationStore = {
   deviceTriggerScan(): void
 
   // Claim stuff
-  client: any
+  publicClient: any
+  walletClient: any
   claim(): void
 }
 
@@ -199,24 +209,27 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
     Claim
   */
 
-  client: createPublicClient({
+  publicClient: createPublicClient({
+    chain: mainnet,
+    transport: http(),
+  }),
+
+  walletClient: createWalletClient({
     chain: mainnet,
     transport: http(),
   }),
 
   claim: async () => {
     // Make sure we have needed stuff
-    const { client, walletAddress } = get()
-    if (!client || walletAddress === '') return
+    const { publicClient, walletAddress, walletClient } = get()
+    if (!publicClient || walletAddress === '' || !walletClient) return
 
     // Get most recent hash
-    const block = await client.getBlock({ blockTag: 'latest' })
+    const block = await publicClient.getBlock({ blockTag: 'latest' })
     if (!block.hash) return
 
     // Create a message with both
     const digest = hashMessageEIP191SolidityKeccak(walletAddress, block.hash)
-
-    console.log('Message hashed', digest)
 
     // Have libhalo sign it
     const res = await execHaloCmdWeb({
@@ -225,7 +238,40 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
       digest: digest.slice(2),
     })
 
-    console.log(res)
+    // Get account address
+
+    // const [account] = await walletClient.getAddresses()
+    // console.log({ account })
+    const noopProvider = { request: () => null } as unknown as EIP1193Provider
+    const provider = typeof window !== 'undefined' ? (window as any).ethereum! : noopProvider
+    const client = createWalletClient({
+      chain: mainnet,
+      transport: custom(provider),
+    })
+
+    // Do it
+    const result = await publicClient.simulateContract({
+      address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
+      abi: [
+        {
+          inputs: [
+            { internalType: 'bytes', name: 'signatureFromChip', type: 'bytes' },
+            { internalType: 'uint256', name: 'blockNumberUsedInSig', type: 'uint256' },
+          ],
+          name: 'mintOrTransferTokenWithChip',
+          outputs: [],
+          stateMutability: 'nonpayable',
+          type: 'function',
+        },
+      ],
+      args: [res.signature.ether, block.number],
+      functionName: 'mintOrTransferTokenWithChip',
+      account: walletAddress,
+    })
+
+    const hash = await client.writeContract(result.request)
+
+    console.log({ hash, result })
   },
 }))
 
