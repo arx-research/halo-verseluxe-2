@@ -12,6 +12,7 @@ import classNames from 'classnames'
 
 import { createPublicClient, http } from 'viem'
 import { mainnet } from 'viem/chains'
+import hashMessageEIP191SolidityKeccak from '../helpers/hash-message'
 
 export default function Content() {
   const s = applicationStore()
@@ -21,24 +22,14 @@ export default function Content() {
 
   const [status, setStatus] = useState(0)
 
-  const client = createPublicClient({
-    chain: mainnet,
-    transport: http(),
-  })
-
   const buttonClick = async () => {
-    const blockNumber = await client.getBlockNumber()
-    const block = await client.getBlock({
-      blockTag: 'latest',
-    })
+    // setStatus(1)
 
-    console.log({ block })
+    await s.claim()
 
-    setStatus(1)
-
-    setTimeout(() => {
-      setStatus(2)
-    }, 1000)
+    // setTimeout(() => {
+    //   setStatus(2)
+    // }, 1000)
   }
 
   return (

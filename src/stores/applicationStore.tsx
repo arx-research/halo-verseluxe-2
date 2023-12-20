@@ -6,16 +6,12 @@ import { IDevice, IKeys } from '../types'
 import generateArweaveQuery from '../helpers/generate-arweave-query'
 import { ARWEAVE_GRAPHQL, TAG_DOMAIN } from '../constants'
 import safeTag from '../helpers/safe-tag'
-import fromHexString from '../helpers/from-hex-string'
-import buf2hex from '../helpers/buff-to-hex'
 
-import {
-  haloGetDefaultMethod,
-  execHaloCmdWeb,
-  haloFindBridge,
-  haloCheckWebNFCPermission,
-} from '@arx-research/libhalo/api/web.js'
+import { execHaloCmdWeb } from '@arx-research/libhalo/api/web.js'
 import parseKeysNew from '../helpers/parse-keys-new'
+import { createPublicClient, http } from 'viem'
+import { mainnet } from 'wagmi'
+import hashMessageEIP191SolidityKeccak from '../helpers/hash-message'
 
 type TApplicationStore = {
   // Global stuff
@@ -38,9 +34,13 @@ type TApplicationStore = {
   deviceInit(): void
   deviceRetrieve(): void
   deviceTriggerScan(): void
+
+  // Claim stuff
+  client: any
+  claim(): void
 }
 
-const applicationStore = create<TApplicationStore>((set) => ({
+const applicationStore = create<TApplicationStore>((set, get) => ({
   /*
     Global
   */
@@ -193,6 +193,39 @@ const applicationStore = create<TApplicationStore>((set) => ({
     } catch (err) {
       console.log('in heree')
     }
+  },
+
+  /* 
+    Claim
+  */
+
+  client: createPublicClient({
+    chain: mainnet,
+    transport: http(),
+  }),
+
+  claim: async () => {
+    // Make sure we have needed stuff
+    const { client, walletAddress } = get()
+    if (!client || walletAddress === '') return
+
+    // Get most recent hash
+    const block = await client.getBlock({ blockTag: 'latest' })
+    if (!block.hash) return
+
+    // Create a message with both
+    const digest = hashMessageEIP191SolidityKeccak(walletAddress, block.hash)
+
+    console.log('Message hashed', digest)
+
+    // Have libhalo sign it
+    const res = await execHaloCmdWeb({
+      name: 'sign',
+      keyNo: 1,
+      digest: digest.slice(2),
+    })
+
+    console.log(res)
   },
 }))
 
