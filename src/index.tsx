@@ -10,7 +10,7 @@ import { WC_PROJECT } from './constants'
 const metadata = {
   name: 'Verseluxe',
   description: '',
-  url: '',
+  url: 'Verseluxe',
   icons: [''],
 }
 

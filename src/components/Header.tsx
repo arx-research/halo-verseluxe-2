@@ -12,6 +12,7 @@ export default function Header() {
   const { chain } = useNetwork()
   const disconnect = applicationStore((s) => s.walletDisconnect)
   const connect = applicationStore((s) => s.walletConnect)
+  const walletSetClient = applicationStore((s) => s.walletSetClient)
 
   React.useEffect(() => {
     if (isConnected && address) {
@@ -22,6 +23,12 @@ export default function Header() {
       disconnect()
     }
   }, [address, isConnected, isDisconnected])
+
+  React.useEffect(() => {
+    if (!isError && !isLoading && walletClient) {
+      walletSetClient(walletClient)
+    }
+  }, [walletClient, isError, isLoading])
 
   return (
     <header className="header">

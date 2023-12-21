@@ -18,7 +18,7 @@ import {
   http,
   parseAbi,
 } from 'viem'
-import { sepolia } from 'viem/chains' 
+import { sepolia } from 'viem/chains'
 import hashMessageEIP191SolidityKeccak from '../helpers/hash-message'
 import { useAccount, useContractWrite, useBlockNumber, useWalletClient } from 'wagmi'
 
@@ -32,10 +32,12 @@ type TApplicationStore = {
   walletAddress: string
   walletChainId: number
   walletDropdownActive: boolean
+  walletClient: any
   walletSetDropdownActive(dropdownActive: boolean): void
   walletDisconnect(): void
   walletConnect(address: string, chainId: number): void
   walletSetReady(): void
+  walletSetClient(walletClient: any): void
 
   // Device stuff
   device: IDevice
@@ -46,7 +48,6 @@ type TApplicationStore = {
 
   // Claim stuff
   publicClient: any
-  walletClient: any
   claim(): void
 }
 
@@ -66,6 +67,7 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
   walletReady: false,
   walletDropdownActive: false,
   walletConnected: false,
+  walletClient: undefined,
 
   walletConnect: (walletAddress, walletChainId) => {
     set({ walletAddress, walletChainId, walletConnected: true })
@@ -83,8 +85,8 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
     set({ walletDropdownActive })
   },
 
-  walletClient: async () => {
-    set({ walletClient: await useWalletClient() })
+  walletSetClient: (walletClient) => {
+    set({ walletClient })
   },
 
   /*
@@ -249,7 +251,7 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
     console.log(res.signature.ether)
     console.log(block.number)
 
-    
+    console.log(walletClient)
 
     // const { write, data: writeData } = useContractWrite({
     //   address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
@@ -272,18 +274,20 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
       address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
       abi: [
         {
-          "inputs":[{"internalType":"bytes","name":"signatureFromChip","type":"bytes"},{"internalType":"uint256","name":"blockNumberUsedInSig","type":"uint256"}],
-          "name":"mintOrTransferTokenWithChip",
-          "outputs":[],
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
+          inputs: [
+            { internalType: 'bytes', name: 'signatureFromChip', type: 'bytes' },
+            { internalType: 'uint256', name: 'blockNumberUsedInSig', type: 'uint256' },
+          ],
+          name: 'mintOrTransferTokenWithChip',
+          outputs: [],
+          stateMutability: 'nonpayable',
+          type: 'function',
+        },
       ],
       args: [res.signature.ether, block.number],
       account: walletAddress,
       functionName: 'mintOrTransferTokenWithChip',
     })
-
 
     const hash = await walletClient.writeContract(result.request)
 
