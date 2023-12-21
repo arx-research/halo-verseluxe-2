@@ -71,6 +71,23 @@ export const SUPPORTED_CHAINS: IChainData[] = [
     },
   },
   {
+    name: 'Ethereum Sepolia',
+    short_name: 'sep',
+    chain: 'ETH',
+    network: 'sepolia',
+    chain_id: 11155111,
+    network_id: 11155111,
+    explorer: '',
+    rpc_url: 'https://sepolia.infura.io/v3/%API_KEY%',
+    native_currency: {
+      symbol: 'ETH',
+      name: 'Sepolia Ether',
+      decimals: '18',
+      contractAddress: '',
+      balance: '',
+    },
+  },
+  {
     name: 'RSK Mainnet',
     short_name: 'rsk',
     chain: 'RSK',
@@ -297,7 +314,7 @@ export function getChainData(chainId: number): IChainData {
   const chainData = SUPPORTED_CHAINS.filter((chain: any) => chain.chain_id === chainId)[0]
 
   if (!chainData) {
-    throw new Error('ChainId missing or not supported')
+    throw new Error(`ChainId ${chainId} missing or not supported`)
   }
 
   const API_KEY = REACT_APP_INFURA_PROJECT_ID

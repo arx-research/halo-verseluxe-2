@@ -10,17 +10,17 @@ import safeTag from '../helpers/safe-tag'
 import { execHaloCmdWeb } from '@arx-research/libhalo/api/web.js'
 import parseKeysNew from '../helpers/parse-keys-new'
 import {
-  EIP1193Provider,
   createPublicClient,
   createWalletClient,
   custom,
   encodeAbiParameters,
+  encodeFunctionData,
   http,
   parseAbi,
 } from 'viem'
-import { mainnet } from 'wagmi'
+import { sepolia } from 'viem/chains' 
 import hashMessageEIP191SolidityKeccak from '../helpers/hash-message'
-import { wagmiAbi } from '../wagmiAbi'
+import { useAccount, useContractWrite, useBlockNumber, useWalletClient } from 'wagmi'
 
 type TApplicationStore = {
   // Global stuff
@@ -81,6 +81,10 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
 
   walletSetDropdownActive: (walletDropdownActive) => {
     set({ walletDropdownActive })
+  },
+
+  walletClient: async () => {
+    set({ walletClient: await useWalletClient() })
   },
 
   /*
@@ -210,22 +214,24 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
   */
 
   publicClient: createPublicClient({
-    chain: mainnet,
+    chain: sepolia,
     transport: http(),
   }),
 
-  walletClient: createWalletClient({
-    chain: mainnet,
-    transport: http(),
-  }),
+  // const noopProvider = { request: () => null } as unknown as EIP1193Provider
+  // const provider = typeof window !== 'undefined' ? window.ethereum! : noopProvider
+  // walletClient: createWalletClient({
+  //   chain: walletChainId,
+  //   transport: custom(provider),
+  // })
 
   claim: async () => {
     // Make sure we have needed stuff
-    const { publicClient, walletAddress, walletClient } = get()
-    if (!publicClient || walletAddress === '' || !walletClient) return
+    const { publicClient, walletClient, walletAddress } = get()
+    if (!publicClient || !walletClient || !walletAddress) return
 
     // Get most recent hash
-    const block = await publicClient.getBlock({ blockTag: 'latest' })
+    const block = await publicClient.getBlock({ blockTag: 'safe' })
     if (!block.hash) return
 
     // Create a message with both
@@ -238,38 +244,48 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
       digest: digest.slice(2),
     })
 
-    // Get account address
-
     // const [account] = await walletClient.getAddresses()
-    // console.log({ account })
-    const noopProvider = { request: () => null } as unknown as EIP1193Provider
-    const provider = typeof window !== 'undefined' ? (window as any).ethereum! : noopProvider
-    const client = createWalletClient({
-      chain: mainnet,
-      transport: custom(provider),
-    })
+    console.log(walletAddress)
+    console.log(res.signature.ether)
+    console.log(block.number)
+
+    
+
+    // const { write, data: writeData } = useContractWrite({
+    //   address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
+    //   abi: [
+    //     {
+    //       "inputs":[{"internalType":"bytes","name":"signatureFromChip","type":"bytes"},{"internalType":"uint256","name":"blockNumberUsedInSig","type":"uint256"}],
+    //       "name":"mintOrTransferTokenWithChip",
+    //       "outputs":[],
+    //       "stateMutability":"nonpayable",
+    //       "type":"function"
+    //     }
+    //   ],
+    //   functionName: 'mintOrTransferTokenWithChip'
+    // })
+
+    // write({ args: [res.signature.ether, block.number] })
 
     // Do it
     const result = await publicClient.simulateContract({
       address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
       abi: [
         {
-          inputs: [
-            { internalType: 'bytes', name: 'signatureFromChip', type: 'bytes' },
-            { internalType: 'uint256', name: 'blockNumberUsedInSig', type: 'uint256' },
-          ],
-          name: 'mintOrTransferTokenWithChip',
-          outputs: [],
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
+          "inputs":[{"internalType":"bytes","name":"signatureFromChip","type":"bytes"},{"internalType":"uint256","name":"blockNumberUsedInSig","type":"uint256"}],
+          "name":"mintOrTransferTokenWithChip",
+          "outputs":[],
+          "stateMutability":"nonpayable",
+          "type":"function"
+        }
       ],
       args: [res.signature.ether, block.number],
-      functionName: 'mintOrTransferTokenWithChip',
       account: walletAddress,
+      functionName: 'mintOrTransferTokenWithChip',
     })
 
-    const hash = await client.writeContract(result.request)
+
+    const hash = await walletClient.writeContract(result.request)
 
     console.log({ hash, result })
   },

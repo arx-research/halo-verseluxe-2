@@ -4,10 +4,11 @@ import Scan from '../pages/Scan'
 import applicationStore from '../stores/applicationStore'
 import Loading from './Loading'
 import Settings from './Settings'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useNetwork, useWalletClient } from 'wagmi'
 
 export default function Router() {
   const { address, isConnected, isDisconnected } = useAccount()
+  const { data: walletClient, isError, isLoading } = useWalletClient()
   const { chain } = useNetwork()
   const s = applicationStore()
 
@@ -25,6 +26,7 @@ export default function Router() {
     }
 
     s.walletSetReady()
+    s.walletClient = walletClient
   }, [address, isConnected, isDisconnected])
 
   return (

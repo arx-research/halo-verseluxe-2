@@ -3,11 +3,12 @@ import applicationStore from '../stores/applicationStore'
 import HeaderConnect from './HeaderConnect'
 import HeaderWallet from './HeaderWallet'
 
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useNetwork, useWalletClient } from 'wagmi'
 
 export default function Header() {
   const settings = (window as any).HALO_SETTINGS
   const { address, isConnected, isDisconnected } = useAccount()
+  const { data: walletClient, isError, isLoading } = useWalletClient()
   const { chain } = useNetwork()
   const disconnect = applicationStore((s) => s.walletDisconnect)
   const connect = applicationStore((s) => s.walletConnect)
