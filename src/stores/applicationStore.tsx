@@ -280,11 +280,7 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
     const { publicClient, device, deviceKeys } = get()
     if (!publicClient || !device || !deviceKeys) return
 
-    console.log(deviceKeys)
-
     try {
-      console.log(computeAddress('0x' + deviceKeys.primaryPublicKeyRaw))
-
       // Check if token exists
       const result = await publicClient.readContract({
         address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
