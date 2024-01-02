@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ARWEAVE_NODE } from '../constants'
 import { getChainData } from '../helpers/get-chain-data'
 import truncateAddress from '../helpers/truncate-address'
@@ -32,6 +32,12 @@ export default function Content() {
     //   setStatus(2)
     // }, 1000)
   }
+
+  useEffect(() => {
+    if (s.walletClient && s.walletAddress) {
+      s.checkClaimed()
+    }
+  }, [s.walletAddress, s.walletClient])
 
   return (
     <Card>

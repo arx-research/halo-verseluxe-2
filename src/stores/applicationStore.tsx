@@ -21,6 +21,8 @@ import {
 import { sepolia } from 'viem/chains'
 import hashMessageEIP191SolidityKeccak from '../helpers/hash-message'
 import { useAccount, useContractWrite, useBlockNumber, useWalletClient } from 'wagmi'
+import makeStatic from '../helpers/make-static'
+import { computeAddress } from 'ethers/lib/utils'
 
 type TApplicationStore = {
   // Global stuff
@@ -49,6 +51,7 @@ type TApplicationStore = {
   // Claim stuff
   publicClient: any
   claim(): void
+  checkClaimed(): void
 }
 
 const applicationStore = create<TApplicationStore>((set, get) => ({
@@ -123,10 +126,13 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
   deviceInit: () => {
     // Parse url
     const url = new URL(window.location.href, true)
+    const { pk1, pk2, pk3 } = url.query
+    let statik = url.query.static
+    if (!statik) statik = makeStatic(pk1, pk2, pk3)
 
-    if (url.query.static) {
+    if (statik) {
       // Parse keys
-      const deviceKeys = parseKeys(url.query.static)
+      const deviceKeys = parseKeys(statik)
 
       // If keys exist
       if (deviceKeys !== false) {
@@ -246,29 +252,6 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
       digest: digest.slice(2),
     })
 
-    // const [account] = await walletClient.getAddresses()
-    console.log(walletAddress)
-    console.log(res.signature.ether)
-    console.log(block.number)
-
-    console.log(walletClient)
-
-    // const { write, data: writeData } = useContractWrite({
-    //   address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
-    //   abi: [
-    //     {
-    //       "inputs":[{"internalType":"bytes","name":"signatureFromChip","type":"bytes"},{"internalType":"uint256","name":"blockNumberUsedInSig","type":"uint256"}],
-    //       "name":"mintOrTransferTokenWithChip",
-    //       "outputs":[],
-    //       "stateMutability":"nonpayable",
-    //       "type":"function"
-    //     }
-    //   ],
-    //   functionName: 'mintOrTransferTokenWithChip'
-    // })
-
-    // write({ args: [res.signature.ether, block.number] })
-
     // Do it
     const result = await publicClient.simulateContract({
       address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
@@ -292,6 +275,43 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
     const hash = await walletClient.writeContract(result.request)
 
     console.log({ hash, result })
+  },
+
+  checkClaimed: async () => {
+    // Make sure we have needed stuff
+    const { publicClient, walletClient, walletAddress, device, deviceKeys } = get()
+    if (!publicClient || !walletClient || !walletAddress || !device || !deviceKeys) return
+
+    console.log({ device: computeAddress(deviceKeys.primaryPublicKeyHash) })
+
+    const result = await publicClient.readContract({
+      address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: 'address',
+              name: 'chipAddress',
+              type: 'address',
+            },
+          ],
+          name: 'tokenIdMappedFor',
+          outputs: [
+            {
+              internalType: 'uint256',
+              name: '',
+              type: 'uint256',
+            },
+          ],
+          stateMutability: 'view',
+          type: 'function',
+        },
+      ],
+      functionName: 'tokenIdMappedFor',
+      args: ['0xC72C758cfC209A28dc44CD1213fb7B585ebe4471'],
+    })
+
+    console.log({ result })
   },
 }))
 
