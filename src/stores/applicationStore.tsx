@@ -306,7 +306,7 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
           },
         ],
         functionName: 'tokenIdMappedFor',
-        args: ['0xC72C758cfC209A28dc44CD1213fb7B585ebe4471' || computeAddress(deviceKeys.primaryPublicKeyHash)],
+        args: [computeAddress(deviceKeys.primaryPublicKeyHash)],
       })
 
       if (result) {
