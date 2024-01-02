@@ -49,6 +49,8 @@ type TApplicationStore = {
   deviceTriggerScan(): void
 
   // Claim stuff
+  isClaimed: boolean | undefined
+  hasClaimable: boolean
   publicClient: any
   claim(): void
   checkClaimed(): void
@@ -221,17 +223,13 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
     Claim
   */
 
+  isClaimed: undefined,
+  hasClaimable: false,
+
   publicClient: createPublicClient({
     chain: sepolia,
     transport: http(),
   }),
-
-  // const noopProvider = { request: () => null } as unknown as EIP1193Provider
-  // const provider = typeof window !== 'undefined' ? window.ethereum! : noopProvider
-  // walletClient: createWalletClient({
-  //   chain: walletChainId,
-  //   transport: custom(provider),
-  // })
 
   claim: async () => {
     // Make sure we have needed stuff
@@ -282,36 +280,77 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
     const { publicClient, walletClient, walletAddress, device, deviceKeys } = get()
     if (!publicClient || !walletClient || !walletAddress || !device || !deviceKeys) return
 
-    console.log({ device: computeAddress(deviceKeys.primaryPublicKeyHash) })
+    try {
+      // Check if token exists
+      const result = await publicClient.readContract({
+        address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
+        abi: [
+          {
+            inputs: [
+              {
+                internalType: 'address',
+                name: 'chipAddress',
+                type: 'address',
+              },
+            ],
+            name: 'tokenIdMappedFor',
+            outputs: [
+              {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+              },
+            ],
+            stateMutability: 'view',
+            type: 'function',
+          },
+        ],
+        functionName: 'tokenIdMappedFor',
+        args: ['0xC72C758cfC209A28dc44CD1213fb7B585ebe4471' || computeAddress(deviceKeys.primaryPublicKeyHash)],
+      })
 
-    const result = await publicClient.readContract({
-      address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'chipAddress',
-              type: 'address',
-            },
-          ],
-          name: 'tokenIdMappedFor',
-          outputs: [
-            {
-              internalType: 'uint256',
-              name: '',
-              type: 'uint256',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-      ],
-      functionName: 'tokenIdMappedFor',
-      args: ['0xC72C758cfC209A28dc44CD1213fb7B585ebe4471'],
-    })
+      if (result) {
+        set({ hasClaimable: true })
+      } else {
+        return
+      }
 
-    console.log({ result })
+      // See if claimed
+      const result2 = await publicClient.readContract({
+        address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
+        abi: [
+          {
+            inputs: [
+              {
+                internalType: 'uint256',
+                name: 'tokenId',
+                type: 'uint256',
+              },
+            ],
+            name: 'ownerOf',
+            outputs: [
+              {
+                internalType: 'address',
+                name: '',
+                type: 'address',
+              },
+            ],
+            stateMutability: 'view',
+            type: 'function',
+          },
+        ],
+        functionName: 'ownerOf',
+        args: [result],
+      })
+
+      if (result2) {
+        set({ isClaimed: true })
+      } else {
+        set({ isClaimed: false })
+      }
+    } catch (err) {
+      console.log('Something went wrong', err)
+    }
   },
 }))
 
