@@ -35,9 +35,7 @@ export default function Content() {
   }
 
   useEffect(() => {
-    if (s.walletClient && s.walletAddress) {
-      s.checkClaimed()
-    }
+    s.checkClaimed()
   }, [s.walletAddress, s.walletClient])
 
   return (
@@ -66,7 +64,8 @@ export default function Content() {
               onClick={buttonClick}
               disabled={s.isClaimed !== false || status > 0 || !s.walletConnected}
               className={classNames('content-special-button', {
-                'content-special-button--no-wallet': !s.walletConnected || s.isClaimed === undefined,
+                'content-special-button--no-wallet':
+                  (!s.walletConnected && s.isClaimed !== true) || s.isClaimed === undefined,
                 'content-special-button--pending': status === 1,
                 'content-special-button--claimed': status === 2 || s.isClaimed,
               })}
