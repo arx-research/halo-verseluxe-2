@@ -18,7 +18,7 @@ import {
   http,
   parseAbi,
 } from 'viem'
-import { sepolia } from 'viem/chains'
+import { sepolia, mainnet } from 'viem/chains'
 import hashMessageEIP191SolidityKeccak from '../helpers/hash-message'
 import { useAccount, useContractWrite, useBlockNumber, useWalletClient } from 'wagmi'
 import makeStatic from '../helpers/make-static'
@@ -227,7 +227,7 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
   hasClaimable: false,
 
   publicClient: createPublicClient({
-    chain: sepolia,
+    chain: mainnet,
     transport: http(),
   }),
 
@@ -252,7 +252,7 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
 
     // Do it
     const result = await publicClient.simulateContract({
-      address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
+      address: '0xe006b2952108744986d0a9b802df904d1a7de674',
       abi: [
         {
           inputs: [
@@ -283,7 +283,7 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
     try {
       // Check if token exists
       const result = await publicClient.readContract({
-        address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
+        address: '0xe006b2952108744986d0a9b802df904d1a7de674',
         abi: [
           {
             inputs: [
@@ -317,7 +317,7 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
 
       // See if claimed
       const result2 = await publicClient.readContract({
-        address: '0x8E54564436157FA91Dfb43a75c10aD5BE137ff7f',
+        address: '0xe006b2952108744986d0a9b802df904d1a7de674',
         abi: [
           {
             inputs: [
