@@ -349,6 +349,7 @@ const applicationStore = create<TApplicationStore>((set, get) => ({
         set({ isClaimed: false })
       }
     } catch (err) {
+      set({ isClaimed: false })
       console.log('Something went wrong', err)
     }
   },
